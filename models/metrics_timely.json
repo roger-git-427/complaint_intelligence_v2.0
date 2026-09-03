@@ -1,0 +1,41 @@
+{
+  "task": "timely_response",
+  "accuracy": 0.9918,
+  "macro_f1": 0.4979,
+  "roc_auc": 0.8121,
+  "train_rows": 6352,
+  "test_rows": 1589,
+  "positive_rate_train": 0.998,
+  "positive_rate_test": 0.9918,
+  "classification_report": {
+    "0": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 13.0
+    },
+    "1": {
+      "precision": 0.9918187539332913,
+      "recall": 1.0,
+      "f1-score": 0.9958925750394945,
+      "support": 1576.0
+    },
+    "accuracy": 0.9918187539332913,
+    "macro avg": {
+      "precision": 0.49590937696664567,
+      "recall": 0.5,
+      "f1-score": 0.49794628751974723,
+      "support": 1589.0
+    },
+    "weighted avg": {
+      "precision": 0.9837044406537867,
+      "recall": 0.9918187539332913,
+      "f1-score": 0.9877449328270883,
+      "support": 1589.0
+    }
+  },
+  "limitations": [
+    "Timely response is often highly imbalanced toward Yes in CFPB extracts.",
+    "Narrative text alone is a weak signal for company response latency."
+  ]
+}

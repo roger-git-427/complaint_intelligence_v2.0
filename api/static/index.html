@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Complaint Intelligence</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a222c;
+      --line: #2c3847;
+      --text: #e8eef5;
+      --muted: #93a0b0;
+      --accent: #6ee7b7;
+      --warn: #fbbf24;
+      --bad: #f87171;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    header, main { max-width: 880px; margin: 0 auto; padding: 1.25rem; }
+    h1 { font-size: 1.35rem; margin: 0 0 0.35rem; }
+    p.lede { color: var(--muted); margin: 0 0 1rem; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    button.tab, button.go {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      padding: 0.45rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font: inherit;
+    }
+    button.tab.active { border-color: var(--accent); color: var(--accent); }
+    button.go { background: #134e4a; border-color: var(--accent); }
+    button.go:disabled { opacity: 0.55; cursor: wait; }
+    textarea {
+      width: 100%;
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0.7rem;
+      font: inherit;
+      min-height: 140px;
+      resize: vertical;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .hint { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.75rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0 0; }
+    #out { margin-top: 1.25rem; display: grid; gap: 0.75rem; }
+    .status {
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+    }
+    .status.error { color: var(--bad); }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+    }
+    .card h2 {
+      margin: 0 0 0.55rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .metric {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem 1rem;
+      margin-bottom: 0.35rem;
+    }
+    .metric .value { font-size: 1.15rem; font-weight: 600; }
+    .metric .meta { color: var(--muted); font-size: 0.9rem; }
+    .yes { color: var(--accent); }
+    .no { color: var(--warn); }
+    .alts {
+      list-style: none;
+      margin: 0.6rem 0 0;
+      padding: 0;
+      display: grid;
+      gap: 0.35rem;
+    }
+    .alts li {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      padding-top: 0.35rem;
+    }
+    .alts li span:last-child { color: var(--text); white-space: nowrap; }
+    .hit-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.75rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 0.45rem;
+    }
+    .hit-meta strong { color: var(--text); font-weight: 600; }
+    .snippet { margin: 0; color: var(--text); font-size: 0.95rem; }
+    .answer { margin: 0; white-space: pre-wrap; }
+    .sql {
+      margin: 0.65rem 0 0;
+      padding: 0.65rem 0.75rem;
+      background: #12181f;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      overflow: auto;
+      color: var(--muted);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.65rem;
+      font-size: 0.88rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.4rem 0.5rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Consumer Complaint Intelligence</h1>
+    <p class="lede">Real CFPB narratives: classify product, retrieve similar complaints, ask the gold warehouse.</p>
+  </header>
+  <main>
+    <div class="tabs">
+      <button class="tab active" data-tab="predict" type="button">Predict</button>
+      <button class="tab" data-tab="search" type="button">Similar</button>
+      <button class="tab" data-tab="chat" type="button">Ask</button>
+    </div>
+
+    <section id="predict" class="panel active">
+      <p class="hint">Paste a complaint narrative. One click runs product classification and timely-response prediction.</p>
+      <textarea id="narrative">Experian will not remove late payments that belong to an identity thief. I sent police reports and they still verified the accounts as mine.</textarea>
+      <div class="actions">
+        <button class="go" data-action="predict" type="button">Predict</button>
+      </div>
+    </section>
+
+    <section id="search" class="panel">
+      <p class="hint">Find past complaints closest to this text.</p>
+      <textarea id="query">Unauthorized accounts appeared on my credit report after a data breach and the bureau will not investigate.</textarea>
+      <div class="actions">
+        <button class="go" data-action="search" type="button">Find similar</button>
+      </div>
+    </section>
+
+    <section id="chat" class="panel">
+      <p class="hint">Warehouse questions (which, how many, timely) go to SQL. Complaint-like questions go to retrieval.</p>
+      <textarea id="question">Which companies have the most credit card complaints in Texas?</textarea>
+      <div class="actions">
+        <button class="go" data-action="chat" type="button">Ask</button>
+      </div>
+    </section>
+
+    <div id="out"><p class="status">Ready.</p></div>
+  </main>
+  <script>
+    const out = document.getElementById("out");
+    const goButtons = () => document.querySelectorAll("button.go");
+
+    function pct(n) {
+      return (Number(n) * 100).toFixed(1) + "%";
+    }
+
+    function setBusy(busy) {
+      goButtons().forEach((btn) => { btn.disabled = busy; });
+    }
+
+    function clearOut(message, isError) {
+      out.innerHTML = "";
+      const p = document.createElement("p");
+      p.className = "status" + (isError ? " error" : "");
+      p.textContent = message;
+      out.appendChild(p);
+    }
+
+    function card(title) {
+      const el = document.createElement("article");
+      el.className = "card";
+      const h = document.createElement("h2");
+      h.textContent = title;
+      el.appendChild(h);
+      return el;
+    }
+
+    function renderPredict(product, timely) {
+      out.innerHTML = "";
+
+      const productCard = card("Product");
+      const metric = document.createElement("div");
+      metric.className = "metric";
+      metric.innerHTML =
+        `<span class="value">${escapeHtml(product.product)}</span>` +
+        `<span class="meta">${pct(product.confidence)} confidence</span>`;
+      productCard.appendChild(metric);
+
+      if (product.alternatives && product.alternatives.length > 1) {
+        const ul = document.createElement("ul");
+        ul.className = "alts";
+        product.alternatives.slice(1).forEach((alt) => {
+          const li = document.createElement("li");
+          li.innerHTML =
+            `<span>${escapeHtml(alt.product)}</span>` +
+            `<span>${pct(alt.confidence)}</span>`;
+          ul.appendChild(li);
+        });
+        productCard.appendChild(ul);
+      }
+      out.appendChild(productCard);
+
+      const timelyCard = card("Timely response");
+      const tMetric = document.createElement("div");
+      tMetric.className = "metric";
+      const label = timely.timely_response ? "Likely timely" : "Likely not timely";
+      const cls = timely.timely_response ? "yes" : "no";
+      tMetric.innerHTML =
+        `<span class="value ${cls}">${label}</span>` +
+        `<span class="meta">${pct(timely.confidence)} confidence · P(timely)=${pct(timely.probability_timely)}</span>`;
+      timelyCard.appendChild(tMetric);
+      out.appendChild(timelyCard);
+    }
+
+    function renderHits(hits, title) {
+      out.innerHTML = "";
+      if (!hits || !hits.length) {
+        clearOut("No similar complaints found.");
+        return;
+      }
+      hits.forEach((hit, i) => {
+        const el = card(`${title || "Match"} ${i + 1}`);
+        const meta = document.createElement("div");
+        meta.className = "hit-meta";
+        meta.innerHTML =
+          `<span><strong>${escapeHtml(String(hit.company || "Unknown"))}</strong></span>` +
+          `<span>${escapeHtml(String(hit.product || ""))}</span>` +
+          `<span>${escapeHtml(String(hit.state || ""))}</span>` +
+          `<span>score ${Number(hit.score).toFixed(3)}</span>` +
+          (hit.complaint_id ? `<span>#${escapeHtml(String(hit.complaint_id))}</span>` : "");
+        el.appendChild(meta);
+        const snip = document.createElement("p");
+        snip.className = "snippet";
+        snip.textContent = hit.snippet || hit.narrative || "";
+        el.appendChild(snip);
+        out.appendChild(el);
+      });
+    }
+
+    function renderChat(data) {
+      out.innerHTML = "";
+      const el = card(data.mode === "sql" ? "Warehouse answer" : "Similar complaints");
+      const answer = document.createElement("p");
+      answer.className = "answer";
+      answer.textContent = data.answer || "(no answer)";
+      el.appendChild(answer);
+
+      if (data.mode === "sql" && data.sql) {
+        const sql = document.createElement("pre");
+        sql.className = "sql";
+        sql.textContent = data.sql;
+        el.appendChild(sql);
+      }
+
+      if (data.mode === "sql" && data.rows && data.rows.length) {
+        const keys = Object.keys(data.rows[0]);
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        thead.innerHTML = "<tr>" + keys.map((k) => `<th>${escapeHtml(k)}</th>`).join("") + "</tr>";
+        table.appendChild(thead);
+        const tbody = document.createElement("tbody");
+        data.rows.slice(0, 12).forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = keys.map((k) => `<td>${escapeHtml(String(row[k]))}</td>`).join("");
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        el.appendChild(table);
+      }
+      out.appendChild(el);
+
+      if (data.mode === "retrieval" && data.citations && data.citations.length) {
+        renderHitsAppend(data.citations);
+      }
+    }
+
+    function renderHitsAppend(hits) {
+      hits.forEach((hit, i) => {
+        const el = card(`Citation ${i + 1}`);
+        const meta = document.createElement("div");
+        meta.className = "hit-meta";
+        meta.innerHTML =
+          `<span><strong>${escapeHtml(String(hit.company || "Unknown"))}</strong></span>` +
+          `<span>${escapeHtml(String(hit.product || ""))}</span>` +
+          `<span>score ${Number(hit.score).toFixed(3)}</span>`;
+        el.appendChild(meta);
+        const snip = document.createElement("p");
+        snip.className = "snippet";
+        snip.textContent = hit.snippet || "";
+        el.appendChild(snip);
+        out.appendChild(el);
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    async function post(path, body) {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const detail = data.detail || data.message || res.statusText;
+        throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
+      }
+      return data;
+    }
+
+    document.querySelectorAll("button.tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("button.tab").forEach((b) => b.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll("button.go").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const action = btn.dataset.action;
+        setBusy(true);
+        clearOut("Running...");
+        try {
+          if (action === "predict") {
+            const narrative = document.getElementById("narrative").value;
+            const [product, timely] = await Promise.all([
+              post("/predict", { narrative }),
+              post("/predict/timely", { narrative }),
+            ]);
+            renderPredict(product, timely);
+          } else if (action === "search") {
+            const data = await post("/search", {
+              query: document.getElementById("query").value,
+              k: 5,
+            });
+            renderHits(data.hits, "Match");
+          } else if (action === "chat") {
+            const data = await post("/chat", {
+              question: document.getElementById("question").value,
+              k: 5,
+            });
+            renderChat(data);
+          }
+        } catch (err) {
+          clearOut(err.message || String(err), true);
+        } finally {
+          setBusy(false);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

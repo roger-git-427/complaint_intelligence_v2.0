@@ -1,0 +1,150 @@
+{
+  "task": "product",
+  "accuracy": 0.7999,
+  "macro_f1": 0.6803,
+  "weighted_f1": 0.7969,
+  "train_rows": 6352,
+  "test_rows": 1589,
+  "train_start": "2024-01-01",
+  "train_end": "2024-11-19",
+  "test_start": "2024-11-19",
+  "test_end": "2024-12-24",
+  "labels": [
+    "Checking or savings account",
+    "Credit card",
+    "Credit reporting or other personal consumer reports",
+    "Debt collection",
+    "Money transfer, virtual currency, or money service",
+    "Mortgage",
+    "Student loan",
+    "Vehicle loan or lease"
+  ],
+  "label_counts": {
+    "Credit reporting or other personal consumer reports": 6294,
+    "Debt collection": 630,
+    "Checking or savings account": 344,
+    "Credit card": 311,
+    "Mortgage": 181,
+    "Vehicle loan or lease": 73,
+    "Money transfer, virtual currency, or money service": 59,
+    "Student loan": 49
+  },
+  "per_class": {
+    "Checking or savings account": {
+      "precision": 0.7368,
+      "recall": 0.8465,
+      "f1": 0.7879,
+      "support": 215
+    },
+    "Credit card": {
+      "precision": 0.7704,
+      "recall": 0.8032,
+      "f1": 0.7865,
+      "support": 188
+    },
+    "Credit reporting or other personal consumer reports": {
+      "precision": 0.8607,
+      "recall": 0.8607,
+      "f1": 0.8607,
+      "support": 725
+    },
+    "Debt collection": {
+      "precision": 0.702,
+      "recall": 0.6965,
+      "f1": 0.6992,
+      "support": 257
+    },
+    "Money transfer, virtual currency, or money service": {
+      "precision": 0.4,
+      "recall": 0.2222,
+      "f1": 0.2857,
+      "support": 27
+    },
+    "Mortgage": {
+      "precision": 0.9391,
+      "recall": 0.8372,
+      "f1": 0.8852,
+      "support": 129
+    },
+    "Student loan": {
+      "precision": 0.6364,
+      "recall": 0.7778,
+      "f1": 0.7,
+      "support": 9
+    },
+    "Vehicle loan or lease": {
+      "precision": 0.56,
+      "recall": 0.359,
+      "f1": 0.4375,
+      "support": 39
+    }
+  },
+  "classification_report": {
+    "Checking or savings account": {
+      "precision": 0.7368421052631579,
+      "recall": 0.8465116279069768,
+      "f1-score": 0.7878787878787878,
+      "support": 215.0
+    },
+    "Credit card": {
+      "precision": 0.7704081632653061,
+      "recall": 0.8031914893617021,
+      "f1-score": 0.7864583333333334,
+      "support": 188.0
+    },
+    "Credit reporting or other personal consumer reports": {
+      "precision": 0.8606896551724138,
+      "recall": 0.8606896551724138,
+      "f1-score": 0.8606896551724138,
+      "support": 725.0
+    },
+    "Debt collection": {
+      "precision": 0.7019607843137254,
+      "recall": 0.6964980544747081,
+      "f1-score": 0.69921875,
+      "support": 257.0
+    },
+    "Money transfer, virtual currency, or money service": {
+      "precision": 0.4,
+      "recall": 0.2222222222222222,
+      "f1-score": 0.2857142857142857,
+      "support": 27.0
+    },
+    "Mortgage": {
+      "precision": 0.9391304347826087,
+      "recall": 0.8372093023255814,
+      "f1-score": 0.8852459016393442,
+      "support": 129.0
+    },
+    "Student loan": {
+      "precision": 0.6363636363636364,
+      "recall": 0.7777777777777778,
+      "f1-score": 0.7,
+      "support": 9.0
+    },
+    "Vehicle loan or lease": {
+      "precision": 0.56,
+      "recall": 0.358974358974359,
+      "f1-score": 0.4375,
+      "support": 39.0
+    },
+    "accuracy": 0.7998741346758967,
+    "macro avg": {
+      "precision": 0.700674347395106,
+      "recall": 0.6753843110269677,
+      "f1-score": 0.6803382142172706,
+      "support": 1589.0
+    },
+    "weighted avg": {
+      "precision": 0.7974680979913865,
+      "recall": 0.7998741346758967,
+      "f1-score": 0.7968664769265998,
+      "support": 1589.0
+    }
+  },
+  "limitations": [
+    "Credit reporting dominates the label mix; prefer macro F1 over accuracy.",
+    "Rare products (money transfer, vehicle) remain weak with this sample size.",
+    "TF-IDF + logistic regression is a strong baseline, not a production ensemble."
+  ]
+}

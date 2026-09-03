@@ -1,0 +1,66 @@
+# Data dumps (keep directory placeholders)
+data/raw/**
+data/bronze/**
+data/silver/**
+data/gold/**
+!data/raw/
+!data/bronze/
+!data/silver/
+!data/gold/
+!data/**/.gitkeep
+*.csv
+*.parquet
+*.zip
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+.coverage
+htmlcov/
+
+# Editors / local AI tooling (never commit)
+.idea/
+.vscode/
+.cursor/
+.cursorrules
+.claude/
+.codex/
+.gemini/
+AGENTS.md
+.agents/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+secrets*.json
+
+# MLflow / local model binaries (metrics JSON is OK to commit)
+mlruns/
+mlartifacts/
+mlflow.db
+*.db
+models/*.joblib
+models/*.pkl
+!models/.gitkeep
+!models/metrics.json
+!models/metrics_timely.json
+!models/quality_report.json
+!models/confusion_matrix.png

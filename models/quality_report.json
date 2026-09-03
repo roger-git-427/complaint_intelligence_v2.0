@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "check": "silver_not_empty",
+      "ok": true,
+      "detail": "rows=8000"
+    },
+    {
+      "check": "silver_unique_complaint_id",
+      "ok": true,
+      "detail": "unique=8000 total=8000"
+    },
+    {
+      "check": "silver_required_non_null",
+      "ok": true,
+      "detail": "complaint_id/date/product/company"
+    },
+    {
+      "check": "silver_has_narrative_rate",
+      "ok": true,
+      "detail": "rate=1.000"
+    },
+    {
+      "check": "gold_fact_not_empty",
+      "ok": true,
+      "detail": "rows=8000"
+    },
+    {
+      "check": "gold_fact_matches_silver",
+      "ok": true,
+      "detail": "fact=8000 silver=8000"
+    },
+    {
+      "check": "gold_company_fk",
+      "ok": true,
+      "detail": "orphans=0"
+    },
+    {
+      "check": "gold_days_to_company_finite",
+      "ok": true,
+      "detail": "mostly within [-1, 365] days"
+    }
+  ],
+  "silver_rows": 8000,
+  "gold_fact_rows": 8000
+}
